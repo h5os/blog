@@ -10,4 +10,21 @@
 "list_all": true,
 
 "doc_list": [
+{"path": "$$doc/buid-blog-system-on-github",
+"title": "在 github 上构建博客系统",
+"keyword": "",
+"desc": "",
+"thumb": "$$doc/buid-blog-system-on-github/$thumbnail.png",
+"create_at": 1437088449.484,
+"modify_at": 1437088455.484
+},
+
+{"path": "$$doc/find-best-frontbackend-js-practice.blog",
+"title": "寻求前后端一体化开发的最佳实践",
+"keyword": "",
+"desc": "",
+"thumb": "",
+"create_at": 1437088448.484,
+"modify_at": 1437088448.484
+}
 ]}
