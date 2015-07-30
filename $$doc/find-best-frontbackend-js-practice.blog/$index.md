@@ -10,8 +10,6 @@
 
 ---
 
-已更新了。OK 工茜
-
 <a name="introduce"></a>&nbsp;
 
 背景介绍
