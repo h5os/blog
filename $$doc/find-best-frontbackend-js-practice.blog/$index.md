@@ -10,7 +10,7 @@
 
 ---
 
-已更新！
+![software.jpg](//h5os.github.io/blog/$$doc/find-best-frontbackend-js-practice.blog/software.jpg)
 
 <a name="introduce"></a>&nbsp;
 
