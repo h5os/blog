@@ -1,0 +1,1 @@
+COMPONENT_OF_PINP_SLIDE,2,<page/>
