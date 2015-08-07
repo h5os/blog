@@ -1,1 +1,176 @@
 COMPONENT_OF_PINP_SLIDE,2,<page/>
+
+COMPONENT_OF_PINP_PLGIN,slideshow-img,<div name="slideshow-img"><script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function(event){
+  var renewFn = pluginOf('slideshow-img').refresh;
+  var nodes = document.querySelectorAll('article > div.slideshow-img > img');
+  for (var i=0,item; item=nodes[i]; i++) {
+    if (apiNode.beenReadonly()) {
+      var txtNode = item.nextSibling;
+      if (txtNode && txtNode.classList.contains('rotate-txt')) txtNode.onclick = function(event){
+        var sUrl='', node=event.target.previousSibling;
+        if (node && node.nodeName == 'IMG') sUrl = node.getAttribute('_jump');
+        if (sUrl) {
+          event.preventDefault(); event.stopPropagation();
+          window.open(sUrl,'_blank');
+        }
+      };
+    }
+    item.onload = function(ev) {
+      var targ=ev.target, owner=targ.parentNode;
+      renewFn(owner,targ);
+    };
+  }
+},false);
+(function(){
+  window.addEventListener('resize', function(event){
+    if (!PINP_FIX_FIT_X && !PINP_FIX_FIT_Y) return;
+    setTimeout( function(){
+      var renewFn = pluginOf('slideshow-img').refresh;
+      var nodes = document.querySelectorAll('article > div.slideshow-img > img');
+      for (var i=0,node; node=nodes[i]; i++) {
+        renewFn(node.parentNode,node);
+      }
+    },0);
+  },false);
+  var dMod = pluginOf('slideshow-img');
+  if (!dMod.title) {
+    dMod.title = 'slideshow image';
+    var refreshFunc = function(owner,targ) {
+      if (!owner || !owner.classList.contains('fullsize-fixed')) return;
+      if (!targ) targ = owner.querySelector('img');
+      if (!targ || !targ.complete) return;
+      var wdFull = SLIDE_HALF_WIDTH + SLIDE_HALF_WIDTH;
+      var hiFull = SLIDE_HALF_HEIGHT + SLIDE_HALF_HEIGHT;
+      var x,y, iWd=wdFull, iHi=hiFull;
+      if (owner.classList.contains('fit-contain')) {
+        x = -SLIDE_HALF_WIDTH; y = -SLIDE_HALF_HEIGHT;
+      } else {
+        var f = targ.naturalWidth / targ.naturalHeight;
+        var f0 = SLIDE_HALF_WIDTH / SLIDE_HALF_HEIGHT;
+        if (f >= f0)
+          iHi = Math.floor(wdFull / f + 0.5);
+        else iWd = Math.floor(hiFull * f + 0.5);
+        x = 0 - Math.floor(iWd * 0.5 + 0.5);
+        y = 0 - Math.floor(iHi * 0.5 + 0.5);
+      }
+      owner.setAttribute('_left',x+'');
+      owner.setAttribute('_top',y+'');
+      owner.setAttribute('_width',iWd+'');
+      owner.setAttribute('_height',iHi+'');
+      owner.style.left   = (SLIDE_HALF_WIDTH + x) + 'px';
+      owner.style.top    = (SLIDE_HALF_HEIGHT + y) + 'px';
+      owner.style.width  = iWd + 'px';
+      owner.style.height = iHi + 'px';
+      setTimeout(function(){apiNode.unselect();},0);
+    };
+    dMod.refresh = refreshFunc;
+    dMod['contain-fit'] = refreshFunc;
+    dMod['fit-contain'] = refreshFunc;
+    dMod['fullsize-fixed'] = refreshFunc;
+    dMod['fixed-fullsize'] = function(owner){
+      if (!owner) return;
+      var targ = owner.querySelector('img');
+      if (!targ) return;
+      var wd=400, hi=300;
+      if (targ.complete) {
+        wd = Math.floor(targ.naturalWidth); hi = Math.floor(targ.naturalHeight);
+      };
+      owner.setAttribute('_width',wd+'');
+      owner.setAttribute('_height',hi+'');
+      owner.style.width  = wd + 'px';
+      owner.style.height = hi + 'px';
+      setTimeout(function(){apiNode.unselect();},0);
+    };
+    dMod.getPluginMenu = function(node) {
+      return [['bind URL',function(node) {
+        var imgNode = node.querySelector('div.slideshow-img > img');
+        if (imgNode) {
+          var s = prompt('Input URL',imgNode.getAttribute('_jump')||'');
+          if (typeof s == 'string') {
+            if (!s)
+              imgNode.removeAttribute('_jump');
+            else imgNode.setAttribute('_jump',s);
+            apiNode.setPageModified();
+          }
+        }
+      }]];
+    };
+  }
+})();
+</script></div>
+COMPONENT_OF_PINP_PLGIN,slideshow-info,<div name="slideshow-info"><script type="text/javascript">
+(function() {
+  var refreshWdgt = function() {
+    var nodes = document.querySelectorAll('article > div.slideshow-info');
+    for (var i=0,owner; owner=nodes[i]; i++) {
+      var iHi = parseInt(owner.getAttribute('_height') || 140);
+      iHi = Math.min(iHi,SLIDE_HALF_HEIGHT+SLIDE_HALF_HEIGHT);
+      owner.setAttribute('_left','-'+SLIDE_HALF_WIDTH);
+      owner.setAttribute('_top',(SLIDE_HALF_HEIGHT-iHi)+'');
+      owner.setAttribute('_width',(SLIDE_HALF_WIDTH+SLIDE_HALF_WIDTH)+'');
+      owner.setAttribute('_height',iHi+'');
+      owner.style.left   = '0px';
+      owner.style.top    = (SLIDE_HALF_HEIGHT + SLIDE_HALF_HEIGHT - iHi) + 'px';
+      owner.style.width  = (SLIDE_HALF_WIDTH+SLIDE_HALF_WIDTH) + 'px';
+      owner.style.height = iHi + 'px';
+    }
+  };
+  document.addEventListener('DOMContentLoaded', function(event){
+    refreshWdgt();
+  },false);
+  window.addEventListener('resize', function(event){
+    if (PINP_FIX_FIT_X || PINP_FIX_FIT_Y) setTimeout(refreshWdgt,0);
+  },false);
+})();
+</script><style>
+div.slideshow-info {color:#fff; overflow:hidden;}
+div.slideshow-info > p {padding-left:10px; padding-right:10px;}
+</style></div>
+COMPONENT_OF_PINP_PLGIN,slideshow-frame,<div name="slideshow-frame"><script type="text/javascript">
+(function(){
+  var dMod = pluginOf('slideshow-frame');
+  if (!dMod.title) {
+    dMod.title = 'slideshow frame';
+    dMod.remake = function(node) {
+      if (startByReadonly_) return;
+      var divNode = node.querySelector('div.slideshow-frame > div');
+      if (divNode) divNode.style.display = 'block';
+    };
+    dMod.oncreated = function(event) {
+      if (event.target) pluginOf('slideshow-frame').remake(event.target);
+    };
+    dMod.getPluginMenu = function(node) {
+      return [['bind URL',function(node) {
+        var frmNode = node.querySelector('div.slideshow-frame > iframe');
+        if (frmNode) {
+          var s = prompt('Input URL',frmNode.getAttribute('src')||'');
+          if (typeof s == 'string') {
+            frmNode.setAttribute('src',s);
+            apiNode.setPageModified();
+          }
+        }
+      }]];
+    };
+  };
+  document.addEventListener('DOMContentLoaded', function(event) {
+    var sShow = startByReadonly_?'none':'block';
+    var nodes = document.querySelectorAll('div.slideshow-frame > div');
+    for (var i=0,item; item=nodes[i]; i++) {item.style.display = sShow;}
+  },false);
+})();
+</script><style>
+.slideshow-frame {overflow:hidden}
+.slideshow-frame > div {display:none; position:relative; left:0px; top:-100%; width:100%; height:100%;}
+</style></div>
+
+COMPONENT_OF_PINP_SLIDE,1,<div class="p1-p2-p3-p0" _zindex="1000" _config="default-large-small default-looser-impacted p1-p2-p3-p0" _left="-314" _top="-263" _width="400"><p>It is sample text.</p></div>
+
+COMPONENT_OF_PINP_SLIDE,2,<page/>
+
+COMPONENT_OF_PINP_SLIDE,1,<div class="pinp-image slideshow-img contain-fit p1-p2-p3-p0 fixed-fullsize" _zindex="996" _config="fixed-fullsize contain-fit default-round2-round3-round0 default-looser-impacted p1-p2-p3-p0" _left="-385" _top="-278" _width="280" _height="228"><img _lazy="//h5os.github.io/blog/$$doc/test4.sshow/get_more.jpg" draggable="false" _jump=""><div class="rotate-txt"></div></div>
+
+<div class="pinp-image round0-default-round2-round3 solid-dotted-dashed p1-p2-p3-p0 center-right-default" _zindex="996" _config="round0-default-round2-round3 default-thin-medium-thick solid-dotted-dashed default-shadow default-large-small default-looser-impacted p1-p2-p3-p0 center-right-default" _left="-9" _top="-289" _width="280" _height="240"><img _lazy="cloud_disk.jpg" draggable="false"><div class="rotate-txt"></div></div>
+
+<div class="svg-shape p1-p2-p3-p0 center-right-default large-small-default" _zindex="998" _config="large-small-default default-looser-impacted p1-p2-p3-p0 center-right-default" _widget="['rgb(51,51,51)','rgba(51,51,51,0.1)',0,3,['']]" _left="-259" _top="47" _width="271" _height="130"><div class='shape-canvas'></div><div class="rotate-txt S5"><span class="S1">entity</span></div><div class="img-resource"><link rel="bookmark" type="text/xml" href="/software/slide11/$images/shape/rect.svg.json"></div></div>
+
